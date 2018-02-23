@@ -24,7 +24,7 @@ export default class OnboardingScreens extends Component {
     showsHorizontalScrollIndicator: false,
     showsVerticalScrollIndicator: false,
     // Do not bounce when the end is reached
-    bounces: false,
+    bounces: true,
     // Do not scroll to top when the status bar is tapped
     scrollsToTop: false,
     // Remove offscreen child views
@@ -82,6 +82,14 @@ export default class OnboardingScreens extends Component {
     this.internals.isScrolling = true;
   };
 
+  onScroll = e => {
+    const index = Math.round((e.nativeEvent.contentOffset.x + 40) / width);
+    this.setState({
+      index,
+    });
+
+  };
+
   /**
    * Scroll end handler
    * @param {object} e native event
@@ -89,93 +97,6 @@ export default class OnboardingScreens extends Component {
   onScrollEnd = e => {
     // Update internal isScrolling state
     this.internals.isScrolling = false;
-
-    // Update index
-    this.updateIndex(
-      // When scrolled with .scrollTo() on Android there is no contentOffset
-      e.nativeEvent.contentOffset
-        ? e.nativeEvent.contentOffset.x
-        : e.nativeEvent.position * this.state.width - 40
-    );
-  };
-
-  /*
-   * Drag end handler
-   * @param {object} e native event
-   */
-  onScrollEndDrag = e => {
-    const { contentOffset: { x: newOffset } } = e.nativeEvent;
-    const { children } = this.props;
-    const { index } = this.state;
-    const { offset } = this.internals;
-
-    // Update internal isScrolling state
-    // if swiped right on the last slide
-    // or left on the first one
-    if (
-      offset === newOffset &&
-      (index === 0 || index === children.length - 1)
-    ) {
-      this.internals.isScrolling = false;
-    }
-  };
-
-  /**
-   * Update index after scroll
-   * @param {object} offset content offset
-   */
-  updateIndex = offset => {
-    const state = this.state;
-    const diff = offset - this.internals.offset;
-    const step = state.width - 40;
-    let index = state.index;
-
-    // Do nothing if offset didn't change
-    if (!diff) {
-      return;
-    }
-
-    // Make sure index is always an integer
-    index = parseInt(index + Math.round(diff / step), 10);
-
-    // Update internal offset
-    this.internals.offset = offset;
-    // Update index in the state
-    this.setState({
-      index,
-    });
-  };
-
-  /**
-   * Swipe one slide forward
-   */
-  swipe = () => {
-    // Ignore if already scrolling or if there is less than 2 slides
-    if (this.internals.isScrolling || this.state.total < 2) {
-      return;
-    }
-
-    const state = this.state;
-    const diff = this.state.index + 1;
-    const x = diff * state.width;
-    const y = 0;
-
-    // Call scrollTo on scrollView component to perform the swipe
-    this.scrollView && this.scrollView.scrollTo({ x, y, animated: true });
-
-    // Update internal scroll state
-    this.internals.isScrolling = true;
-
-    // Trigger onScrollEnd manually on android
-    if (Platform.OS === 'android') {
-      setImmediate(() => {
-        this.onScrollEnd({
-          nativeEvent: {
-            position: diff,
-          },
-        });
-      });
-    }
   };
 
   /**
@@ -188,10 +109,11 @@ export default class OnboardingScreens extends Component {
       {...this.props}
       contentContainerStyle={[style.wrapper, this.props.style]}
       onScrollBeginDrag={this.onScrollBegin}
+      onScroll={this.onScroll}
       onMomentumScrollEnd={this.onScrollEnd}
-      onScrollEndDrag={this.onScrollEndDrag}
       horizontal={Boolean(true)}
       decelerationRate={0}
+      scrollEventThrottle={1}
       snapToInterval={width - 60}
       snapToAlignment={'center'}
       automaticallyAdjustContentInsets={false}
