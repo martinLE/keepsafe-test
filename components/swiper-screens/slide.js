@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { View, Text, Image } from 'react-native';
-import PropTypes from 'prop-types';
+import PropTypes from 'prop-types'; // 15.6.0
 
 import style from './style.js';
 
 class Slide extends Component {
   render() {
-    const { text, badge } = this.props;
+    const { text, badge, parentStyle } = this.props;
     return (
-      <View style={[style.slide]}>
+      <View style={[style.slide, parentStyle]}>
         <View style={style.innerSlide}>
           <Text style={style.text}>{text}</Text>
         </View>

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import PropTypes from 'prop-types'; // Supported builtin module
+import PropTypes from 'prop-types'; // 15.6.0
 
 import ScreenOneHeader from './one';
 import ScreenTwoHeader from './two';

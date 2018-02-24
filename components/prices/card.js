@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import PropTypes from 'prop-types'; // Supported builtin module
+import PropTypes from 'prop-types'; // 15.6.0
 
 import priceTypes from './types';
 import colors from '../../themes/colors';

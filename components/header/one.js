@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, View, Image, TouchableOpacity } from 'react-native';
 
-import PropTypes from 'prop-types'; // Supported builtin module
+import PropTypes from 'prop-types'; // 15.6.0
 import styles from './style';
 
 import CrownImage from '../../themes/assets/premium-badge.png';
